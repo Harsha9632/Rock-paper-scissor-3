@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Rock Paper Scissors</title>
+ <link rel="stylesheet" href="styles/login.css">
+
+
+</head>
+<body>
+  <div class="login-container">
+    <h2>Login to Play</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button id="login-button">Login</button>
+    <button id="register-button">Register</button>
+    <p id="auth-message"></p>
+  </div>
+
+  <script>
+    async function authRequest(endpoint) {
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const authMessage = document.getElementById('auth-message');
+
+      if (!username || !password) {
+        authMessage.textContent = 'Please enter both fields.';
+        return;
+      }
+
+      try {
+        const res = await fetch(`http://localhost:3000/api/auth/${endpoint}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          localStorage.setItem('currentUser', username);
+          window.location.href = 'index.html';
+        } else {
+          authMessage.textContent = data.error || 'Something went wrong';
+        }
+      } catch (err) {
+        authMessage.textContent = 'Server error';
+      }
+    }
+
+    document.getElementById('login-button').addEventListener('click', () => authRequest('login'));
+    document.getElementById('register-button').addEventListener('click', () => authRequest('register'));
+  </script>
+</body>
+</html>
