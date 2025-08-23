@@ -1,6 +1,6 @@
 const express = require('express');
 const User = require('../models/User');
-const router = express.Router();
+const router = express.router();
 
 router.get('/:username', async (req, res) => {
   const user = await User.findOne({ username: req.params.username });
